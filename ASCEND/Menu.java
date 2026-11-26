@@ -1,19 +1,51 @@
 package ASCEND;
-import javax.swing.*;
+
+import java.io.File;
+import java.util.List;
 
 public class Menu {
-    public static void main(String[] args) {
-        JFrame samting = new JFrame();
-        samting.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel Intro = new JLabel("Welcome To ASCEND");
-        System.out.println("Welcome To ASCEND");
-        samting.setSize(800,800);
-        samting.getContentPane().setBackground(java.awt.Color.BLACK);
-        samting.setVisible(true);
-
-        Intro.setBackground(java.awt.Color.BLACK);
-        Intro.setVisible(true);
-        Intro.setSize(800,800);
-        
+    public static void show(String[] args) {
+        String[] gameArgs = args.clone();
+        UI.launch(() -> UI.showMenu(
+                () -> {
+                    List<File> levels = Gameloop.getLevelImages(gameArgs);
+                    showLevelPicker(gameArgs, levels);
+                },
+                () -> Gameloop.resetProgress(Gameloop.getLevelDirectory(gameArgs)),
+                () -> System.exit(0)));
     }
+
+    private static void showLevelPicker(String[] args, List<File> levels) {
+        if (levels.isEmpty()) {
+            UI.showLevelPicker(
+                    levels,
+                    false,
+                    () -> { },
+                    new boolean[3],
+                    (finaleIndex, finaleName) -> { },
+                    (level, levelIndex) -> Gameloop.game(level, levelIndex, () -> { }),
+                    () -> show(args));
+            return;
+        }
+
+        File directory = levels.get(0).getParentFile();
+        boolean tutorialCompleted = Gameloop.isTutorialCompleted(directory);
+        UI.showLevelPicker(
+                levels,
+                tutorialCompleted,
+                () -> UI.showTutorial(() -> {
+                    Gameloop.completeTutorial(directory);
+                    showLevelPicker(args, levels);
+                }),
+                Gameloop.getUnlockedFinales(levels),
+                (finaleIndex, finaleName) -> UI.showFinalLevel(
+                        finaleName,
+                        () -> showLevelPicker(args, levels)),
+                (level, levelIndex) -> Gameloop.game(
+                        level,
+                        levelIndex,
+                        () -> showLevelPicker(args, levels)),
+                () -> show(args));
+    }
+
 }
