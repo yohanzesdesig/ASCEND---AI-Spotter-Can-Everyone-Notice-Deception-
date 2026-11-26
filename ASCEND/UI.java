@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class UI {
+    private static final String MENU_MUSIC_PLACEHOLDER = "Assets/Audio/main-menu.mp3";
+    private static final String LEVEL_MUSIC_PLACEHOLDER = "Assets/Audio/levels.mp3";
     private static final String TUTORIAL_TEXT =
             "Welcome to ASCEND!\n\n"
             + "You will review the images in the folder and decide whether to approve or disapprove each one.\n\n"
@@ -67,7 +69,8 @@ public class UI {
 
             dialogue.setText(pages[currentPage[0]]);
             progressLabel.setText(
-                    "Tutorial " + (currentPage[0] + 1) + " of " + pages.length);
+                    "Tutorial " + (currentPage[0] + 1) + " of " + pages.length
+                    + " | Music placeholder: " + LEVEL_MUSIC_PLACEHOLDER);
             continueButton.setText(
                     currentPage[0] == pages.length - 1 ? "Start game (Enter)" : "Continue (Enter)");
         };
@@ -83,7 +86,9 @@ public class UI {
                 });
 
         dialogue.setText(pages[0]);
-        progressLabel.setText("Tutorial 1 of " + pages.length);
+        progressLabel.setText(
+                "Tutorial 1 of " + pages.length + " | Music placeholder: "
+                + LEVEL_MUSIC_PLACEHOLDER);
         continueButton.setText(pages.length == 1 ? "Start game (Enter)" : "Continue (Enter)");
         tutorialFrame.setContentPane(content);
         tutorialFrame.setSize(720, 360);
@@ -105,6 +110,10 @@ public class UI {
         JLabel title = new JLabel("ASCEND", SwingConstants.CENTER);
         title.setForeground(Color.WHITE);
         title.setFont(title.getFont().deriveFont(Font.BOLD, 56f));
+        JLabel musicPlaceholder = new JLabel(
+                "Music placeholder: " + MENU_MUSIC_PLACEHOLDER,
+                SwingConstants.CENTER);
+        musicPlaceholder.setForeground(Color.LIGHT_GRAY);
 
         JButton startButton = new JButton("Start");
         startButton.setFont(startButton.getFont().deriveFont(Font.BOLD, 18f));
@@ -158,12 +167,15 @@ public class UI {
         constraints.insets = new Insets(0, 0, 30, 0);
         menuPanel.add(title, constraints);
         constraints.gridy = 1;
+        constraints.insets = new Insets(0, 0, 12, 0);
+        menuPanel.add(musicPlaceholder, constraints);
+        constraints.gridy = 2;
         constraints.insets = new Insets(0, 0, 0, 0);
         menuPanel.add(buttonsPanel, constraints);
 
         menuFrame.setContentPane(menuPanel);
-        menuFrame.setSize(520, 360);
-        menuFrame.setMinimumSize(new Dimension(420, 320));
+        menuFrame.setSize(520, 400);
+        menuFrame.setMinimumSize(new Dimension(420, 360));
         menuFrame.setLocationRelativeTo(null);
         menuFrame.setVisible(true);
     }
@@ -265,7 +277,8 @@ public class UI {
         header.add(title, BorderLayout.NORTH);
         instruction.setText(levels.isEmpty()
                 ? "Add images to your image folder to create levels."
-                : "Complete the tutorial and image levels to unlock a finale that matches your answers.");
+                : "Complete the tutorial and image levels to unlock a finale that matches your answers. "
+                + "Music placeholder: " + LEVEL_MUSIC_PLACEHOLDER);
         header.add(instruction, BorderLayout.SOUTH);
 
         JPanel content = new JPanel(new BorderLayout(0, 18));
@@ -287,6 +300,9 @@ public class UI {
         frame.setLayout(new BorderLayout(12, 12));
         JButton toggleHintButton = new JButton("Hide Hint");
         JPanel headerPanel = new JPanel(new BorderLayout());
+        JLabel musicPlaceholder = new JLabel(
+                "Music placeholder: " + LEVEL_MUSIC_PLACEHOLDER);
+        headerPanel.add(musicPlaceholder, BorderLayout.WEST);
         headerPanel.add(progressLabel, BorderLayout.CENTER);
         headerPanel.add(toggleHintButton, BorderLayout.EAST);
         frame.add(headerPanel, BorderLayout.NORTH);
@@ -369,9 +385,18 @@ public class UI {
             backAction.run();
         });
 
+        JLabel musicPlaceholder = new JLabel(
+                "Music placeholder: " + LEVEL_MUSIC_PLACEHOLDER,
+                SwingConstants.CENTER);
+        musicPlaceholder.setForeground(Color.LIGHT_GRAY);
+        JPanel footer = new JPanel(new BorderLayout(0, 8));
+        footer.setBackground(new Color(18, 24, 32));
+        footer.add(musicPlaceholder, BorderLayout.NORTH);
+        footer.add(backButton, BorderLayout.SOUTH);
+
         content.add(title, BorderLayout.NORTH);
         content.add(videoPlaceholder, BorderLayout.CENTER);
-        content.add(backButton, BorderLayout.SOUTH);
+        content.add(footer, BorderLayout.SOUTH);
         finalLevelFrame.setContentPane(content);
         finalLevelFrame.setSize(800, 520);
         finalLevelFrame.setMinimumSize(new Dimension(560, 360));
